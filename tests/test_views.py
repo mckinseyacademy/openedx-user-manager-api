@@ -3,18 +3,21 @@ Tests for User Manager Application views
 """
 from __future__ import absolute_import, unicode_literals
 
-import json
-
 import ddt
 from mock import PropertyMock, patch
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.test import APIClient
 
 from django.contrib.auth.models import User
-from django.test import Client, TestCase
-from django.urls import reverse
+from django.test import TestCase
 
 from user_manager.api.v1.views import ManagerViewMixin
 from user_manager.models import UserManagerRole
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 
 @ddt.ddt
@@ -41,8 +44,8 @@ class UserManagerRoleViewsTest(TestCase):
         self.user = User.objects.create(username='staff', email='staff@example.org', is_staff=True)
         self.user.set_password('test')
         self.user.save()
-        self.client = Client()
-        self.client.login(username=self.user.username, password='test')
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
         self.users = list(self._create_users())
         self.managers = list(self._create_managers())
         for user in self.users[:5]:
@@ -63,8 +66,8 @@ class UserManagerRoleViewsTest(TestCase):
 
     def test_no_duplicate_managers(self):
         response = self.client.get(reverse('v1:managers-list'))
-        data = json.loads(response.content)
-        results = data['results']
+        self.assertEqual(response.status_code, 200)
+        results = response.data['results']
         self.assertEqual(len(results), 2)
 
     @ddt.data('username', 'email')
@@ -74,8 +77,8 @@ class UserManagerRoleViewsTest(TestCase):
             kwargs={'username': getattr(self.managers[0], attr)},
         )
         response = self.client.get(url)
-        data = json.loads(response.content)
-        results = data['results']
+        self.assertEqual(response.status_code, 200)
+        results = response.data['results']
         self.assertEqual(len(results), 5)
 
     def test_manager_reports_list_post_duplicate(self):
@@ -94,14 +97,15 @@ class UserManagerRoleViewsTest(TestCase):
         )
         response = self.client.post(url, {'email': 'non@existent.com'})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content, '{"detail":"No user with that email"}')
+        self.assertEqual(response.data, {"detail": "No user with that email"})
 
     def test_manager_reports_list_delete_all(self):
         url = reverse(
             'v1:manager-reports-list',
             kwargs={'username': self.managers[0].email},
         )
-        self.client.delete(url)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
         query = UserManagerRole.objects.filter(manager_user=self.managers[0])
         self.assertEqual(query.count(), 0)
 
@@ -110,9 +114,10 @@ class UserManagerRoleViewsTest(TestCase):
             'v1:manager-reports-list',
             kwargs={'username': self.managers[0].email},
         )
-        self.client.delete(
+        response = self.client.delete(
             '{url}?user={email}'.format(url=url, email=self.users[0].email)
         )
+        self.assertEqual(response.status_code, 204)
         query = UserManagerRole.objects.filter(manager_user=self.managers[0])
         self.assertEqual(query.count(), 4)
         self.assertNotIn(self.users[0].email, query.values_list('user__email', flat=True))
@@ -135,8 +140,8 @@ class UserManagerRoleViewsTest(TestCase):
             kwargs={'username': getattr(self.users[0], attr)},
         )
         response = self.client.get(url)
-        data = json.loads(response.content)
-        results = data['results']
+        self.assertEqual(response.status_code, 200)
+        results = response.data['results']
         self.assertEqual(len(results), 2)
 
     def test_user_managers_list_post_duplicate(self):
@@ -153,7 +158,8 @@ class UserManagerRoleViewsTest(TestCase):
             'v1:user-managers-list',
             kwargs={'username': self.users[0].email},
         )
-        self.client.post(url, {'email': 'unregistered@user.com'})
+        response = self.client.post(url, {'email': 'unregistered@user.com'})
+        self.assertEqual(response.status_code, 201)
         query = UserManagerRole.objects.filter(user=self.users[0])
         self.assertEqual(query.count(), 3)
         self.assertIn(
@@ -166,7 +172,8 @@ class UserManagerRoleViewsTest(TestCase):
             'v1:user-managers-list',
             kwargs={'username': self.users[0].email},
         )
-        self.client.delete(url)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
         query = UserManagerRole.objects.filter(user=self.users[0])
         self.assertEqual(query.count(), 0)
 
@@ -177,9 +184,10 @@ class UserManagerRoleViewsTest(TestCase):
             'v1:user-managers-list',
             kwargs={'username': self.users[0].email},
         )
-        self.client.delete(
+        response = self.client.delete(
             '{url}?manager={email}'.format(url=url, email=self.managers[0].email)
         )
+        self.assertEqual(response.status_code, 204)
         query = UserManagerRole.objects.filter(user=self.users[0])
         self.assertEqual(query.count(), 1)
         self.assertNotIn(
