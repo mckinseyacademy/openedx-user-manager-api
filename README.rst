@@ -23,6 +23,20 @@ otherwise noted.
 
 Please see ``LICENSE.txt`` for details.
 
+Testing
+-------
+
+This package uses ``tox`` to run the tests against multiple combinations of python and django versions.
+
+To run the the full test suite:
+
+..code_block::
+
+    $ mkvirtualenv venv
+    $ make requirements
+    $ make test-all
+
+
 How To Contribute
 -----------------
 
