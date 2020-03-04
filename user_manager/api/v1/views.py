@@ -86,6 +86,7 @@ class BulkCreateMixin(object):
         self.errors = []
 
     def get_serializer(self, *args, **kwargs):
+        """Return serialiser for resource."""
         if isinstance(kwargs.get('data', {}), list):
             self.bulk_operation = True
             kwargs['many'] = True
@@ -93,6 +94,7 @@ class BulkCreateMixin(object):
         return super(BulkCreateMixin, self).get_serializer(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        """Create new object."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         reports = self.perform_create(serializer)
@@ -405,7 +407,7 @@ class ManagerReportsListView(ManagerViewMixin, BulkCreateMixin, ListCreateAPIVie
             'manager_user': manager_user,
         }
 
-    def delete(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+    def delete(self, request, *args, **kwargs):
         """
         Delete one or all reports for provided manager.
         """
@@ -546,7 +548,7 @@ class UserManagerListView(ManagerViewMixin, ListCreateAPIView):
         except User.DoesNotExist:
             serializer.save(unregistered_manager_email=manager_email, user=user)
 
-    def delete(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+    def delete(self, request, *args, **kwargs):
         """
         Delete all manager for supplied user.
         """

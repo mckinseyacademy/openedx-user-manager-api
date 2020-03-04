@@ -31,7 +31,6 @@ def get_user_by_username_or_email(identifier):
     """
     Get user by identifier, which could be an email or username.
     """
-
     if '@' in identifier:
         return User.objects.get(email=identifier)
     else:

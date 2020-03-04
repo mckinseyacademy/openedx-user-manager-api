@@ -3,8 +3,9 @@ Tests for User Manager Application views
 """
 from __future__ import absolute_import, unicode_literals
 
-import ddt
 import json
+
+import ddt
 from mock import PropertyMock, patch
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.test import APIClient
@@ -29,6 +30,7 @@ class UserManagerRoleViewsTest(TestCase):
 
     @staticmethod
     def _create_users():
+        """Create regualar test users"""
         for idx in range(10):
             username = 'report{}'.format(idx)
             email = '{username}@somecorp.com'.format(username=username)
@@ -36,12 +38,14 @@ class UserManagerRoleViewsTest(TestCase):
 
     @staticmethod
     def _create_managers():
+        """Create manager test users"""
         for idx in range(2):
             username = 'manager{}'.format(idx)
             email = '{username}@somecorp.com'.format(username=username)
             yield User.objects.create(username=username, email=email)
 
     def setUp(self):
+        super(UserManagerRoleViewsTest, self).setUp()
         self.user = User.objects.create(username='staff', email='staff@example.org', is_staff=True)
         self.user.set_password('test')
         self.user.save()
@@ -120,7 +124,7 @@ class UserManagerRoleViewsTest(TestCase):
             {'email': bad_email},
         ])
         response = self.client.post(url, data=data, content_type='application/json')
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf8'))
 
         self.assertEqual(response.status_code, 202)
         self.assertEqual(len(data['results']), 2)
@@ -136,7 +140,7 @@ class UserManagerRoleViewsTest(TestCase):
         )
 
         response = self.client.post(url, data={}, content_type='application/json')
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf8'))
         self.assertEqual(response.status_code, 400)
         self.assertEqual(data[0], 'A `username` or `email` must be specified')
 
@@ -156,9 +160,9 @@ class UserManagerRoleViewsTest(TestCase):
         )
 
         bad_email = 'non@existent.com'
-        response = self.client.post(url, {'email': bad_email})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.post(url, {'email': bad_email, 'id': 11})
         self.assertEqual(response.data, {"detail": "No user with identifier: {}".format(bad_email)})
+        self.assertEqual(response.status_code, 404)
 
     def test_manager_reports_list_delete_all(self):
         url = reverse(

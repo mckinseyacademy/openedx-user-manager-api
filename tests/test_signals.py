@@ -18,6 +18,7 @@ class UserManagerRoleSignalsTest(TestCase):
     """
 
     def setUp(self):
+        super(UserManagerRoleSignalsTest, self).setUp()
         self.user = User.objects.create(username='test')
         self.manager_email = 'manager@management.co'
         UserManagerRole.objects.create(

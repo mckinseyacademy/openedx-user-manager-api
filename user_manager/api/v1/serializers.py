@@ -38,7 +38,7 @@ class ManagerListSerializer(serializers.Serializer):  # pylint: disable=abstract
 class ManagerReportsSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """ Serializer for User manager reports """
 
-    id = fields.IntegerField(source='user.id', required=True)
+    id = fields.IntegerField(source='user.id', required=False)
     email = fields.EmailField(source='user.email', required=False)
     username = fields.CharField(source='user.username', required=False)
 
