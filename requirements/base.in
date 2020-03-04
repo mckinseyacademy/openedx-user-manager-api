@@ -1,4 +1,4 @@
 # Core requirements for using this application
 
 Django>=1.8              # Web application framework
-djangorestframework>=3.0,<3.7     # API tools
+djangorestframework>=3.0,<3.10     # API tools
