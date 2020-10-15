@@ -12,6 +12,8 @@ matrix:
     env: TOXENV=docs
   - python: 3.5
     env: TOXENV=django20
+  - python: 3.5
+    env: TOXENV=django22
 cache:
 - pip
 before_install:
