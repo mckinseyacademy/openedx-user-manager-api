@@ -41,7 +41,7 @@ class UserManagerRole(models.Model):
                   "registered for an account."
     )
 
-    class Meta(object):
+    class Meta(object):  # pylint: disable=useless-object-inheritance
         """
         Meta settings for ``UserManagerRole`` object.
         """
@@ -53,7 +53,7 @@ class UserManagerRole(models.Model):
             ('user', 'unregistered_manager_email'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Readable name for ``UserManagerRole`` object.
         """

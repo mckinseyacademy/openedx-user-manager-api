@@ -6,7 +6,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 import ddt
-from mock import PropertyMock, patch
+from mock import patch
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.test import APIClient
 

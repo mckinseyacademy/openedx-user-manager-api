@@ -60,7 +60,7 @@ def _filter_by_user_id_or_email(queryset, identifier):
         return queryset.filter(user__username=identifier)
 
 
-class ManagerViewMixin(object):
+class ManagerViewMixin(object):  # pylint: disable=useless-object-inheritance
     """
     Provide common functionality for all manager views.
     """
@@ -72,10 +72,10 @@ class ManagerViewMixin(object):
         Allow users authenticated via OAuth2 or normal session authentication.
         """
         try:
-            from openedx.core.lib.api.authentication import OAuth2AuthenticationAllowInactiveUser  # pylint: disable=import-error
-            from openedx.core.lib.api.authentication import SessionAuthenticationAllowInactiveUser  # pylint: disable=import-error
+            from openedx.core.lib.api.authentication import OAuth2AuthenticationAllowInactiveUser  # pylint: disable=import-outside-toplevel
+            from openedx.core.lib.api.authentication import SessionAuthenticationAllowInactiveUser  # pylint: disable=import-outside-toplevel
         except ImportError:
-            from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser  # pylint: disable=import-error
+            from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser  # pylint: disable=import-outside-toplevel
 
         return [
             OAuth2AuthenticationAllowInactiveUser(),
@@ -83,7 +83,7 @@ class ManagerViewMixin(object):
         ]
 
 
-class BulkCreateMixin(object):
+class BulkCreateMixin(object):  # pylint: disable=useless-object-inheritance
     """Allows bulk creation of a resource."""
     def __init__(self):
         self.bulk_operation = False

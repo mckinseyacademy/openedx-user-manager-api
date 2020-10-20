@@ -16,7 +16,7 @@ class ManagerListSerializer(serializers.Serializer):  # pylint: disable=abstract
     email = fields.SerializerMethodField(validators=(EmailValidator,))
     username = fields.SerializerMethodField()
 
-    class Meta(object):
+    class Meta(object):  # pylint: disable=useless-object-inheritance
         fields = ('email', 'username')
 
     def get_email(self, obj):
