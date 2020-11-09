@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             model_name='usermanagerrole',
             name='unregistered_manager_email',
             field=models.EmailField(blank=True,
-                                    help_text=b"The email address for a manager if they haven't currently registered for an account.",
+                                    help_text="The email address for a manager if they haven't currently registered for an account.",
                                     max_length=254, null=True),
         ),
     ]
