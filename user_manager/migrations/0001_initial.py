@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False,
                                         verbose_name='ID')),
                 ('unregistered_manager_email', models.EmailField(
-                    help_text=b"The email address for a manager if they haven't currently registered for an account.",
+                    help_text="The email address for a manager if they haven't currently registered for an account.",
                     max_length=254)),
                 ('manager_user', models.ForeignKey(blank=True, null=True,
                                                    on_delete=django.db.models.deletion.CASCADE,
