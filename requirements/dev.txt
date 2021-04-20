@@ -39,7 +39,7 @@ pip-tools==5.3.1          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
-py==1.9.0                 # via tox
+py==1.10.0                 # via tox
 pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.1.1         # via -r requirements/quality.in
 pygments==2.7.1           # via diff-cover, readme-renderer
